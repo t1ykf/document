@@ -44,6 +44,8 @@ Android 封装例子（已全部封装）：https://github.com/t1ykf/t1y-android
 
 ### 添加一行数据
 
+添加数据成功后，系统会自动创建 createdAt 以及 updatedAt 字段。
+
 ```shell
 curl -X POST \
     -H "X-T1Y-Application-ID: Your Application ID" \
@@ -52,11 +54,27 @@ curl -X POST \
     -H "X-T1Y-Safe-Timestamp: Current timestamp" \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
     -H "Content-Type: application/json" \
-    -d '{"score":1337,"playerName":"Sean Plott","cheatMode":false}' \
+    -d '{"name": "王华", "age": 21, "sex": "男"}' \
     https://自己备案的域名/v5/classes/YourTableName
 ```
 
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "objectId": "65435f093b239fddbc3f646e"
+  }
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
 ### 删除一行数据
+
+若 objectId 不存在，系统不会执行任何操作。
 
 ```shell
 curl -X DELETE \
@@ -69,7 +87,21 @@ curl -X DELETE \
     https://自己备案的域名/v5/classes/YourTableName/ObjectID
 ```
 
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": null
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
 ### 修改一行数据
+
+可以使用`$inc`等操作符。例如使 number 类型的数据增加指定数值，例如 age 加一岁：`{"$inc": {"age": 1}}`
 
 ```shell
 curl -X PUT \
@@ -79,9 +111,21 @@ curl -X PUT \
     -H "X-T1Y-Safe-Timestamp: Current timestamp" \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
     -H "Content-Type: application/json" \
-    -d '{"$set":{"score":1337,"playerName":"Sean Plott","cheatMode":false}}' \
+    -d '{"$set":{"name": "王华华", "age": 23, "sex": "女"}}' \
     https://自己备案的域名/v5/classes/YourTableName/ObjectID
 ```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": null
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
 
 ### 获取一行数据
 
@@ -96,7 +140,26 @@ curl -X GET \
     https://自己备案的域名/v5/classes/YourTableName/ObjectID
 ```
 
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "_id": "65435f093b239fddbc3f646e"
+    "name": "王华",
+    "age": 21,
+    "sex": "男"
+  }
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
 ### 获取全部数据（分页查询）
+
+分页查询中的 `page` 为页码，`size` 为每页条目数。
 
 ```shell
 curl -X GET \
@@ -108,6 +171,162 @@ curl -X GET \
     -H "Content-Type: application/json" \
     https://自己备案的域名/v5/classes/YourTableName?page=1&size=10
 ```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "_id": "65435f093b239fddbc3f646e"
+      "name": "王华",
+      "age": 21,
+      "sex": "男"
+    },
+    {
+      "_id": "65435f093b239fddbc3f646e"
+      "name": "王华华",
+      "age": 23,
+      "sex": "女"
+    }
+  ]
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
+### 批量添加数据
+
+```shell
+curl -X GET \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    -d '[{"name": "王华", "age": 21, "sex": "男"}, {"name": "王华华", "age": 23, "sex": "女"}]' \
+    https://自己备案的域名/v5/classes/YourTableName/batch/create
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": ["65435f093b239fddbc3f646e", "65435f093b239fddbc3f6474"]
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
+### 批量删除数据
+
+```shell
+curl -X GET \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    -d '["65435f093b239fddbc3f646e", "65435f093b239fddbc3f6474"]' \
+    https://自己备案的域名/v5/classes/YourTableName/batch/delete
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "deletedCount": 2
+  }
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
+### 批量修改数据
+
+```shell
+curl -X GET \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    -d '[{"id": "65435f093b239fddbc3f646e", "body": {"$set":{"name": "王华华", "age": 23, "sex": "女"}}}, {"id": "65435f093b239fddbc3f6474", "body": {"$set":{"name": "林黛玉", "age": 33, "sex": "女"}}}]' \
+    https://自己备案的域名/v5/classes/YourTableName/batch/update
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "updatedCount": 2
+  }
+}
+```
+
+### 高级查询
+
+高级查询可以使用条件操作符，更好的过滤结果。
+
+- (or) 或 - $or
+- (>) 大于 - $gt
+- (<) 小于 - $lt
+- (>=) 大于等于 - $gte
+- (<= ) 小于等于 - $lte
+
+例如查询年龄大于 20 岁的：
+
+```shell
+curl -X GET \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    -d '{"age": {"$gt": 20}}' \
+    https://自己备案的域名/v5/classes/YourTableName/query
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": [
+    {
+      "_id": "65435f093b239fddbc3f646e"
+      "name": "王华",
+      "age": 21,
+      "sex": "男"
+    },
+    {
+      "_id": "65435f093b239fddbc3f646e"
+      "name": "王华华",
+      "age": 23,
+      "sex": "女"
+    }
+  ]
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
+### 聚合查询&排序（待更新）
 
 ### X-T1Y-Safe-Sign 加密格式说明
 
@@ -139,11 +358,10 @@ MD5(
 
 ### 联系我们
 
-联系
-网站：dev.t1y.net
-邮箱：wwwanghua@outlook.com
-QQ：422584084
-微信：wwwAnghuaWechat
-QQ 交流群 1：671186603
-QQ 交流群 2：292846194
-Github 组织：https://github.com/t1ykf
+- 网站：dev.t1y.net
+- 邮箱：wwwanghua@outlook.com
+- QQ：422584084
+- 微信：wwwAnghuaWechat
+- QQ 交流群 1：671186603
+- QQ 交流群 2：292846194
+- Github 组织：https://github.com/t1ykf
