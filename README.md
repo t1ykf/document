@@ -44,8 +44,8 @@ Vite4+Vue3+TypeScript 封装例子（已全部封装）：https://github.com/t1y
 
 ```shell
 curl -X POST \
-    -H "X-Bmob-Application-ID: Your Application ID" \
-    -H "X-Bmob-Api-Key: Your Api Key" \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
     -H "X-T1Y-Safe-NonceStr: Client random code" \
     -H "X-T1Y-Safe-Timestamp: Current timestamp" \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
@@ -58,8 +58,8 @@ curl -X POST \
 
 ```shell
 curl -X DELETE \
-    -H "X-Bmob-Application-ID: Your Application ID" \
-    -H "X-Bmob-Api-Key: Your Api Key" \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
     -H "X-T1Y-Safe-NonceStr: Client random code" \
     -H "X-T1Y-Safe-Timestamp: Current timestamp" \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
@@ -71,8 +71,8 @@ curl -X DELETE \
 
 ```shell
 curl -X PUT \
-    -H "X-Bmob-Application-ID: Your Application ID" \
-    -H "X-Bmob-Api-Key: Your Api Key" \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
     -H "X-T1Y-Safe-NonceStr: Client random code" \
     -H "X-T1Y-Safe-Timestamp: Current timestamp" \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
@@ -85,8 +85,8 @@ curl -X PUT \
 
 ```shell
 curl -X GET \
-    -H "X-Bmob-Application-ID: Your Application ID" \
-    -H "X-Bmob-Api-Key: Your Api Key" \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
     -H "X-T1Y-Safe-NonceStr: Client random code" \
     -H "X-T1Y-Safe-Timestamp: Current timestamp" \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
@@ -98,8 +98,8 @@ curl -X GET \
 
 ```shell
 curl -X GET \
-    -H "X-Bmob-Application-ID: Your Application ID" \
-    -H "X-Bmob-Api-Key: Your Api Key" \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
     -H "X-T1Y-Safe-NonceStr: Client random code" \
     -H "X-T1Y-Safe-Timestamp: Current timestamp" \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
