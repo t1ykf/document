@@ -17,6 +17,8 @@ Go 语言 SDK：https://github.com/t1ykf/t1y-sdk-go
 
 Vite4+Vue3+TypeScript 封装例子（已全部封装）：https://github.com/t1ykf/t1-vite-vue-typescript-demo
 
+Android 封装例子（已全部封装）：https://github.com/t1ykf/t1y-android-demo
+
 更多 SDK 及 功能 持续加入中，期待您的加入……
 
 ### 注册 T1 后端云账号
