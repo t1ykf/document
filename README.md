@@ -200,7 +200,7 @@ curl -X GET \
 ### 批量添加数据
 
 ```shell
-curl -X GET \
+curl -X POST \
     -H "X-T1Y-Application-ID: Your Application ID" \
     -H "X-T1Y-Api-Key: Your Api Key" \
     -H "X-T1Y-Safe-NonceStr: Client random code" \
@@ -208,7 +208,7 @@ curl -X GET \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
     -H "Content-Type: application/json" \
     -d '[{"name": "王华", "age": 21, "sex": "男"}, {"name": "王华华", "age": 23, "sex": "女"}]' \
-    https://自己备案的域名/v5/classes/YourTableName/batch/create
+    https://自己备案的域名/v5/classes/YourTableName/batch
 ```
 
 响应示例：
@@ -226,7 +226,7 @@ curl -X GET \
 ### 批量删除数据
 
 ```shell
-curl -X GET \
+curl -X DELETE \
     -H "X-T1Y-Application-ID: Your Application ID" \
     -H "X-T1Y-Api-Key: Your Api Key" \
     -H "X-T1Y-Safe-NonceStr: Client random code" \
@@ -234,7 +234,7 @@ curl -X GET \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
     -H "Content-Type: application/json" \
     -d '["65435f093b239fddbc3f646e", "65435f093b239fddbc3f6474"]' \
-    https://自己备案的域名/v5/classes/YourTableName/batch/delete
+    https://自己备案的域名/v5/classes/YourTableName/batch
 ```
 
 响应示例：
@@ -254,7 +254,7 @@ curl -X GET \
 ### 批量修改数据
 
 ```shell
-curl -X GET \
+curl -X PUT \
     -H "X-T1Y-Application-ID: Your Application ID" \
     -H "X-T1Y-Api-Key: Your Api Key" \
     -H "X-T1Y-Safe-NonceStr: Client random code" \
@@ -262,7 +262,7 @@ curl -X GET \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
     -H "Content-Type: application/json" \
     -d '[{"id": "65435f093b239fddbc3f646e", "body": {"$set":{"name": "王华华", "age": 23, "sex": "女"}}}, {"id": "65435f093b239fddbc3f6474", "body": {"$set":{"name": "林黛玉", "age": 33, "sex": "女"}}}]' \
-    https://自己备案的域名/v5/classes/YourTableName/batch/update
+    https://自己备案的域名/v5/classes/YourTableName/batch
 ```
 
 响应示例：
@@ -277,7 +277,7 @@ curl -X GET \
 }
 ```
 
-### 高级查询
+### 高级查询（分页、排序、比较）
 
 高级查询可以使用条件操作符，更好的过滤结果。
 
@@ -299,17 +299,17 @@ curl -X GET \
 
 也可以使用 `$regex` 正则匹配
 
-例如查询年龄大于 20 岁的：
+例如查询第一页，每页 10 条数据，以年龄进行降序排序（-1 为降序，1 为升序），并且年龄大于 20 岁的：
 
 ```shell
-curl -X GET \
+curl -X POST \
     -H "X-T1Y-Application-ID: Your Application ID" \
     -H "X-T1Y-Api-Key: Your Api Key" \
     -H "X-T1Y-Safe-NonceStr: Client random code" \
     -H "X-T1Y-Safe-Timestamp: Current timestamp" \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
     -H "Content-Type: application/json" \
-    -d '{"age": {"$gt": 20}}' \
+    -d '{"page": 1, "size": 10, "sort": -1, "body": {"age": {"$gt": 20}}}' \
     https://自己备案的域名/v5/classes/YourTableName/query
 ```
 
@@ -322,15 +322,15 @@ curl -X GET \
   "data": [
     {
       "_id": "65435f093b239fddbc3f646e"
-      "name": "王华",
-      "age": 21,
-      "sex": "男"
-    },
-    {
-      "_id": "65435f093b239fddbc3f646e"
       "name": "王华华",
       "age": 23,
       "sex": "女"
+    },
+    {
+      "_id": "65435f093b239fddbc3f646e"
+      "name": "王华",
+      "age": 21,
+      "sex": "男"
     }
   ]
 }
@@ -338,7 +338,150 @@ curl -X GET \
 
 响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
 
-### 聚合查询&排序（待更新）
+### 聚合查询（分组、聚合、运算）
+
+聚合查询可以很方便的统计数据情况。
+
+- $sum 计算总和
+
+```json
+[
+  {
+    "$group": {
+      "_id": "$name",
+      "num_tutorial": { "$sum": "$age" }
+    }
+  }
+]
+```
+
+- $avg 计算平均值
+
+```json
+[
+  {
+    "$group": {
+      "_id": "$name",
+      "num_tutorial": { "$avg": "$age" }
+    }
+  }
+]
+```
+
+- $min 获取最小值
+
+```json
+[
+  {
+    "$group": {
+      "_id": "$name",
+      "num_tutorial": { "$min": "$age" }
+    }
+  }
+]
+```
+
+- $max 获取最大值
+
+```json
+[
+  {
+    "$group": {
+      "_id": "$name",
+      "num_tutorial": { "$max": "$age" }
+    }
+  }
+]
+```
+
+- $push 将值加入一个数组中，不会判断是否有重复的值
+
+```json
+[
+  {
+    "$group": {
+      "_id": "$name",
+      "num_tutorial": { "$push": "$array" }
+    }
+  }
+]
+```
+
+- $addToSet 将值加入一个数组中，会判断是否有重复的值，若相同的值在数组中已经存在了，则不加入
+
+```json
+[
+  {
+    "$group": {
+      "_id": "$name",
+      "num_tutorial": { "$addToSet": "$array" }
+    }
+  }
+]
+```
+
+- $first 根据数据的排序获取第一条数据
+
+```json
+[
+  {
+    "$group": {
+      "_id": "$name",
+      "num_tutorial": { "$first": "$array" }
+    }
+  }
+]
+```
+
+- $last 根据数据的排序获取最后一条数据
+
+```json
+[
+  {
+    "$group": {
+      "_id": "$name",
+      "num_tutorial": { "$last": "$array" }
+    }
+  }
+]
+```
+
+例如统计名字相同的学生数量：
+
+```shell
+curl -X POST \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    -d '[{"$group" : {"_id" : "$name", "sum" : {"$sum" : 1}}}]' \
+    https://自己备案的域名/v5/classes/YourTableName/aggregate
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "data": {
+    "data": [
+      {
+        "_id": "王华华",
+        "sum": 1
+      },
+      {
+        "_id": "王华",
+        "sum": 6
+      }
+    ]
+  },
+  "message": "ok"
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
 
 ### X-T1Y-Safe-Sign 加密格式说明
 
