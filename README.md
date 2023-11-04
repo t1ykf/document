@@ -44,7 +44,7 @@ Android 封装例子（已全部封装）：https://github.com/t1ykf/t1y-android
 
 ### 添加一行数据
 
-添加数据成功后，系统会自动创建 createdAt 以及 updatedAt 字段。
+添加数据成功后，系统会自动创建 createdAt 以及 updatedAt 字段（若往不存在的表中添加数据，系统会自动创建该表）。
 
 ```shell
 curl -X POST \
@@ -101,7 +101,7 @@ curl -X DELETE \
 
 ### 修改一行数据
 
-可以使用`$inc`等操作符。例如使 number 类型的数据增加指定数值，例如 age 加一岁：`{"$inc": {"age": 1}}`
+可以使用`$inc`等操作符。例如使 number 类型的数据增加指定数值，例如年龄增加一岁：`{"$inc": {"age": 1}}`
 
 ```shell
 curl -X PUT \
@@ -150,7 +150,9 @@ curl -X GET \
     "_id": "65435f093b239fddbc3f646e"
     "name": "王华",
     "age": 21,
-    "sex": "男"
+    "sex": "男",
+    "createdAt": "2023-11-04T09:25:24.707+08:00",
+    "updatedAt": "2023-11-04T09:25:24.707+08:00"
   }
 }
 ```
@@ -183,13 +185,17 @@ curl -X GET \
       "_id": "65435f093b239fddbc3f646e"
       "name": "王华",
       "age": 21,
-      "sex": "男"
+      "sex": "男",
+      "createdAt": "2023-11-04T09:25:24.707+08:00",
+      "updatedAt": "2023-11-04T09:25:24.707+08:00"
     },
     {
       "_id": "65435f093b239fddbc3f646e"
       "name": "王华华",
       "age": 23,
-      "sex": "女"
+      "sex": "女",
+      "createdAt": "2023-11-04T09:25:24.707+08:00",
+      "updatedAt": "2023-11-04T09:25:24.707+08:00"
     }
   ]
 }
@@ -198,6 +204,8 @@ curl -X GET \
 响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
 
 ### 批量添加数据
+
+若往不存在的表中添加数据，系统会自动创建该表。
 
 ```shell
 curl -X POST \
@@ -309,7 +317,7 @@ curl -X POST \
     -H "X-T1Y-Safe-Timestamp: Current timestamp" \
     -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
     -H "Content-Type: application/json" \
-    -d '{"page": 1, "size": 10, "sort": -1, "body": {"age": {"$gt": 20}}}' \
+    -d '{"page": 1, "size": 10, "sort": {"age": -1}, "body": {"age": {"$gt": 20}}}' \
     https://自己备案的域名/v5/classes/YourTableName/query
 ```
 
@@ -324,13 +332,17 @@ curl -X POST \
       "_id": "65435f093b239fddbc3f646e"
       "name": "王华华",
       "age": 23,
-      "sex": "女"
+      "sex": "女",
+      "createdAt": "2023-11-04T09:25:24.707+08:00",
+      "updatedAt": "2023-11-04T09:25:24.707+08:00"
     },
     {
       "_id": "65435f093b239fddbc3f646e"
       "name": "王华",
       "age": 21,
-      "sex": "男"
+      "sex": "男",
+      "createdAt": "2023-11-04T09:25:24.707+08:00",
+      "updatedAt": "2023-11-04T09:25:24.707+08:00"
     }
   ]
 }
@@ -477,6 +489,114 @@ curl -X POST \
       }
     ]
   },
+  "message": "ok"
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
+### 查询所有表
+
+```shell
+curl -X GET \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    https://自己备案的域名/v5/schemas
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "data": {
+    "tables": ["users", "student"]
+  },
+  "message": "ok"
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
+### 创建表
+
+使用该接口可以创建一个指定表，但是使用创建数据接口，往不存在的表中创建数据时，系统会自动创建该表，效果是一样的。
+
+```shell
+curl -X POST \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    https://自己备案的域名/v5/schemas/TableName
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "data": null,
+  "message": "ok"
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
+### 清空表
+
+使用该接口会清空指定表中的所有数据，⚠️ 危险操作，谨慎使用！
+
+```shell
+curl -X PUT \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    https://自己备案的域名/v5/schemas/TableName
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "data": null,
+  "message": "ok"
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
+### 删除表
+
+使用该接口会删除指定表及表中的所有数据，⚠️ 危险操作，谨慎使用！
+
+```shell
+curl -X DELETE \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    https://自己备案的域名/v5/schemas/TableName
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "data": null,
   "message": "ok"
 }
 ```
