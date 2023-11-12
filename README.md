@@ -605,6 +605,65 @@ curl -X DELETE \
 
 响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
 
+### 发送短信验证码
+
+使用该接口用于发送短信验证码，验证码数据会存储到 `sys_codes` 表中，费用 0.05 元 / 条。
+
+```shell
+curl -X GET \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    https://自己备案的域名/v5/sys/code?phone=18888888888
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "objectId": "65435f093b239fddbc3f646e"
+  }
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
+### 发送邮件
+
+使用该接口用于发送邮件，支持 HTML，邮件数据会存储到 `sys_emails` 表中，费用 0.05 元 / 条。
+
+```shell
+curl -X POST \
+    -H "X-T1Y-Application-ID: Your Application ID" \
+    -H "X-T1Y-Api-Key: Your Api Key" \
+    -H "X-T1Y-Safe-NonceStr: Client random code" \
+    -H "X-T1Y-Safe-Timestamp: Current timestamp" \
+    -H "X-T1Y-Safe-Sign: MD5(Path + Application ID + API Key + NonceStr + Timestamp + Secret_Key)" \
+    -H "Content-Type: application/json" \
+    -d '{"to": "收件人邮箱", "subject": "标题", "body": "<p>这是一封测试邮件。</p>"}' \
+    https://自己备案的域名/v5/sys/email
+```
+
+响应示例：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": {
+    "objectId": "65435f093b239fddbc3f646e"
+  }
+}
+```
+
+响应总是包含 `code`、`message`、`data` 三个字段，请求成功为 `200` 状态码，所以请求时判断 HTTP 状态码或者 code 字段即可知道当前操作是否成功。
+
 ### X-T1Y-Safe-Sign 加密格式说明
 
 X-T1Y-Safe-Sign 用于生成签名，确保数据安全。你应当使用 URL 中的路径（注意 GET 参数不需要参与运算）+您的 Application ID+您的 API Key+NonceStr（这是客户端随机生成的 32 位字符串）+Timestamp（当前时间戳，精确到秒即可）+您的 SecretKey 进行 MD5 取值，就得到了 X-T1Y-Safe-Sign 的值。
