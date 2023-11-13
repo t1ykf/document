@@ -636,7 +636,7 @@ curl -X GET \
 
 ### 发送邮件
 
-使用该接口用于发送邮件，支持 HTML，邮件数据会存储到 `sys_emails` 表中。
+使用该接口用于发送邮件，支持 HTML，邮件数据会存储到 `sys_emails` 表中，有已经编写好的模板，请访问<a href="./EMAIL.md">EMAIL.md</a>。
 
 ```shell
 curl -X POST \
