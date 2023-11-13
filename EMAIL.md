@@ -6,7 +6,7 @@
 
 该模板适用于邮箱验证码场景，请根据需要酌情修改。
 
-<div style="padding-left: 50px;padding-right: 50px;border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;">
+<div style="border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;">
     <div style="background: #67C23A;height: 3px;"></div>
     <dev style="padding-top: 200px;padding-bottom: 200px;text-align: center;background: white;">
         <h3>XXX 邮箱验证码</h3>
@@ -24,7 +24,7 @@
 以下代码为双引号版本，部分不支持单引号变量的编程语言需要转义操作。
 
 ```html
-<div style="padding-left: 50px;padding-right: 50px;border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;">
+<div style="border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;">
     <div style="background: #67C23A;height: 3px;"></div>
     <dev style="padding-top: 200px;padding-bottom: 200px;text-align: center;background: white;">
         <h3>XXX 邮箱验证码</h3>
@@ -41,7 +41,7 @@
 单引号版本，若您的编程语言不支持单引号变量可以使用该版本，减去转义操作。
 
 ```html
-<div style='padding-left: 50px;padding-right: 50px;border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;'>
+<div style='border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;'>
     <div style='background: #67C23A;height: 3px;'></div>
     <dev style='padding-top: 200px;padding-bottom: 200px;text-align: center;background: white;'>
         <h3>XXX 邮箱验证码</h3>
